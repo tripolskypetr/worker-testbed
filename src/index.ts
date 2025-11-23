@@ -96,9 +96,23 @@ export const run = singleshot(async (__filename: string, cb: () => void = () => 
     throw new Error("workertest parentPort is null");
   }
 
+  const finishTest = singleshot((status: "pass" | "fail", msg?: string) => {
+    parentPort!.postMessage({ status, msg });
+    process.exit(0);
+  });
+
+  process.on('uncaughtException', function (err) {
+    // fail current test in worker
+    finishTest("fail", `Uncaught exception: ${getErrorMessage(err)}`);
+  });
+
+  process.on('unhandledRejection', (error) => {
+    throw error;
+  });
+
   testRegistry.get(workerData.testName).cb({
-    pass: (msg) => parentPort!.postMessage({ status: "pass", msg }),
-    fail: (msg) => parentPort!.postMessage({ status: "fail", msg }),
+    pass: (msg) => finishTest("pass", msg),
+    fail: (msg) => finishTest("fail", msg),
   });
 
 });
