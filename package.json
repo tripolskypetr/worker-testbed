@@ -1,6 +1,6 @@
 {
   "name": "worker-testbed",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "The AI-ready testbed which use Worker Threads to create isolated vm context",
   "author": {
     "name": "Petr Tripolsky",

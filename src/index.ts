@@ -1,7 +1,7 @@
 import { Worker, isMainThread, workerData, parentPort } from "worker_threads";
 import { fileURLToPath } from "url";
 
-import { ToolRegistry, createAwaiter, BehaviorSubject, Subject, singleshot, getErrorMessage } from "functools-kit";
+import { ToolRegistry, createAwaiter, BehaviorSubject, Subject, singleshot, getErrorMessage, sleep } from "functools-kit";
 
 import tape from "tape";
 
@@ -49,28 +49,31 @@ export const test = async (testName: string, cb: (t: ITest) => void) => {
       workerData: { testName },
     });
 
-    worker.once("message", ({ status, msg }) => {
+    worker.once("message", async ({ status, msg }) => {
       if (status === "pass") {
         test.pass(msg);
       } else if (status === "fail") {
         test.fail(msg);
+        await sleep(100);
       }
       isFinished = true;
       worker.terminate();
       resolve();
     });
 
-    worker.on("error", (err) => {
+    worker.on("error", async (err) => {
       test.fail(`Worker error: ${getErrorMessage(err)}`);
+      await sleep(100);
       resolve();
     });
 
-    worker.on("exit", (code) => {
+    worker.on("exit", async (code) => {
       if (isFinished) {
         return;
       }
       if (code !== 0) {
         test.fail(`Worker stopped with exit code ${code}`);
+        await sleep(100);
         resolve();
       }
     });
