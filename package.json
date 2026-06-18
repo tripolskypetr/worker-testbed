@@ -1,6 +1,6 @@
 {
   "name": "worker-testbed",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "The AI-ready testbed which use Worker Threads to create isolated vm context",
   "author": {
     "name": "Petr Tripolsky",
@@ -61,7 +61,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "functools-kit": "^2.0.2",
+    "functools-kit": "^3.0.0",
     "tape": "^5.9.0"
   }
 }
